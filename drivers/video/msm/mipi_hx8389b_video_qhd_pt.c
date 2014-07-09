@@ -41,8 +41,8 @@ static int mipi_video_hx8389b_qhd_pt_init(void)
 	if (msm_fb_detect_client("mipi_video_hx8389b_qhd"))
 		return 0;
 
-	pinfo.xres = 400;
-	pinfo.yres = 800;
+	pinfo.xres = 540;
+	pinfo.yres = 960;
 	pinfo.type = MIPI_VIDEO_PANEL;
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
