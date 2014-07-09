@@ -880,9 +880,9 @@ ft5x06_virtual_keys_register(struct kobject *kobj,
 {
 	if (machine_is_msm8625q_skud() || machine_is_msm8625q_evbd()) {
 		return snprintf(buf, 200,
-			__stringify(EV_KEY) ":" __stringify(KEY_HOME)  ":67:840:135:60"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_MENU)   ":202:840:135:60"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK) ":337:840:135:60"
+			__stringify(EV_KEY) ":" __stringify(KEY_HOME)  ":240:840:170:40"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_MENU)   ":70:840:170:40"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK) ":410:840:170:40"
 			":" __stringify(EV_KEY) ":" __stringify(KEY_SEARCH)   ":472:840:135:60"
 			"\n");
 	} if (machine_is_msm8625q_skue()) {
@@ -992,14 +992,14 @@ static void __init ft5x06_touchpad_setup(void)
 	} else if(machine_is_msm8625q_evbd()) {
 		ft5x06_platformdata.irq_gpio = FT5X16_IRQ_GPIO_EVBD;
 		ft5x06_platformdata.reset_gpio = FT5X06_RESET_GPIO;
-		ft5x06_platformdata.x_max = 540;
-		ft5x06_platformdata.y_max = 960;
+		ft5x06_platformdata.x_max = 480;
+		ft5x06_platformdata.y_max = 800;
 		ft5x06_device_info[0].irq = MSM_GPIO_TO_INT(FT5X16_IRQ_GPIO_EVBD);
 	} else if (machine_is_msm8625q_skue()) {
 		ft5x06_platformdata.irq_gpio = FT5X06_IRQ_GPIO_QPR_SKUE;
 		ft5x06_platformdata.reset_gpio = FT5X06_RESET_GPIO_QPR_SKUE;
-		ft5x06_platformdata.x_max = 540;
-		ft5x06_platformdata.y_max = 960;
+		ft5x06_platformdata.x_max = 480;
+		ft5x06_platformdata.y_max = 800;
 		ft5x06_device_info[0].irq = MSM_GPIO_TO_INT(FT5X06_IRQ_GPIO_QPR_SKUE);
 	}
 
