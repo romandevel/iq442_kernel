@@ -508,7 +508,7 @@ void __init msm7627a_sensor_init(void)
 	if (machine_is_msm8625q_skud()) {
 		pr_info("i2c_register_board_info ISL29028 ALP sensor!\n");
 		isl29028_gpio_setup();
-		i2c_register_board_info(MSM_GSBI0_QUP_I2C_BUS_ID,
+		i2c_register_board_info(MSM_GSBI1_QUP_I2C_BUS_ID,
 					isl29028_i2c_info,
 					ARRAY_SIZE(isl29028_i2c_info));
 	}
