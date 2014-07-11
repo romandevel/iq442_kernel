@@ -41,18 +41,18 @@ static int mipi_video_hx8389b_qhd_pt_init(void)
 	if (msm_fb_detect_client("mipi_video_hx8389b_qhd"))
 		return 0;
 
-	pinfo.xres = 540;
-	pinfo.yres = 960;
+	pinfo.xres = 480;
+	pinfo.yres = 800;
 	pinfo.type = MIPI_VIDEO_PANEL;
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
 	pinfo.lcdc.h_back_porch = 55;
-	pinfo.lcdc.h_front_porch = 105;
-	pinfo.lcdc.h_pulse_width = 8;
-	pinfo.lcdc.v_back_porch = 15;
-	pinfo.lcdc.v_front_porch = 20;
-	pinfo.lcdc.v_pulse_width = 1;
+	pinfo.lcdc.h_front_porch = 55;
+	pinfo.lcdc.h_pulse_width = 20;
+	pinfo.lcdc.v_back_porch = 21;
+	pinfo.lcdc.v_front_porch = 17;
+	pinfo.lcdc.v_pulse_width = 4;
 	pinfo.lcdc.border_clr = 0;	/* blk */
 	pinfo.lcdc.underflow_clr = 0xff;	/* blue */
 	/* number of dot_clk cycles HSYNC active edge is
@@ -61,7 +61,7 @@ static int mipi_video_hx8389b_qhd_pt_init(void)
 	pinfo.clk_rate = 513000000;
 	pinfo.bl_max = 255;
 	pinfo.bl_min = 1;
-	pinfo.fb_num = 2;
+	pinfo.fb_num = 3;
 
 	pinfo.mipi.mode = DSI_VIDEO_MODE;
 	/* send HSA and HE following VS/VE packet */
