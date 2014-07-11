@@ -287,10 +287,10 @@ static ssize_t mxt_virtual_keys_register(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
 	char *virtual_keys = __stringify(EV_KEY) ":" __stringify(KEY_MENU) \
-		":60:860:110:80" ":" __stringify(EV_KEY) \
-		":" __stringify(KEY_HOME)   ":180:860:110:80" \
+		":70:840:170:40" ":" __stringify(EV_KEY) \
+		":" __stringify(KEY_HOME)   ":240:840:170:40" \
 		":" __stringify(EV_KEY) ":" \
-		__stringify(KEY_BACK) ":300:860:110:80" \
+		__stringify(KEY_BACK) ":410:840:170:40" \
 		":" __stringify(EV_KEY) ":" \
 		__stringify(KEY_SEARCH)   ":420:860:110:80" "\n";
 
@@ -634,12 +634,12 @@ static ssize_t clearpad3000_virtual_keys_register(struct kobject *kobj,
 		     struct kobj_attribute *attr, char *buf)
 {
 	char *virtual_keys = __stringify(EV_KEY) ":" __stringify(KEY_MENU) \
-			     ":60:830:120:60" ":" __stringify(EV_KEY) \
-			     ":" __stringify(KEY_HOME)   ":180:830:120:60" \
+			     ":70:840:170:40" ":" __stringify(EV_KEY) \
+			     ":" __stringify(KEY_HOME)   ":240:840:170:40" \
 				":" __stringify(EV_KEY) ":" \
 				__stringify(KEY_SEARCH) ":300:830:120:60" \
 				":" __stringify(EV_KEY) ":" \
-			__stringify(KEY_BACK)   ":420:830:120:60" "\n";
+			__stringify(KEY_BACK)   ":410:840:170:40" "\n";
 
 	return snprintf(buf, strnlen(virtual_keys, MAX_LEN) + 1 , "%s",
 			virtual_keys);
@@ -893,10 +893,10 @@ ft5x06_virtual_keys_register(struct kobject *kobj,
 			"\n");
 	} else {
 		return snprintf(buf, 200,
-			__stringify(EV_KEY) ":" __stringify(KEY_MENU)  ":40:510:80:60"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_HOME)   ":120:510:80:60"
+			__stringify(EV_KEY) ":" __stringify(KEY_MENU)  ":70:840:170:40"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_HOME)   ":240:840:170:40"
 			":" __stringify(EV_KEY) ":" __stringify(KEY_SEARCH) ":200:510:80:60"
-			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK)   ":280:510:80:60"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK)   ":410:840:170:40"
 			"\n");
 	}
 }
