@@ -20,19 +20,16 @@ static struct msm_panel_info pinfo;
 static struct mipi_dsi_phy_ctrl dsi_video_mode_phy_db = {
 	/* DSI Bit Clock at 500 MHz, 2 lane, RGB888 */
 	/* regulator */
-	{0x03, 0x01, 0x01, 0x00},
+	{0x03, 0x01, 0x01, 0x00}, 
 	/* timing   */
-	{0xba, 0x8e, 0x20, 0x00, 0x98, 0x9a, 0x23, 0x90,
-	0x19, 0x03, 0x04},
+	{0xA6, 0x89, 0x15, 0x00, 0x90, 0x8F, 0x18, 0x8B, 0x0F, 0x03, 0x04},
 	/* phy ctrl */
-	{0x7f, 0x00, 0x00, 0x00},
+	{0x7f, 0x00, 0x00, 0x00}, 
 	/* strength */
 	{0xbb, 0x02, 0x06, 0x00},
 	/* pll control */
-	{0x00, 0xfc, 0x30, 0xd2, 0x00, 0x40, 0x37, 0x62,
-	0x00, 0x07, 0x03,
-	0x05, 0x14, 0x03, 0x0, 0x0, 0x0, 0x20, 0x0, 0x02, 0x0},
-};
+	{0x00, 0x4B, 0x31, 0xD2, 0x00, 0x40, 0x37, 0x62, 0x01, 0x0F, 0x07, 
+	0x05, 0x14, 0x03, 0x0, 0x0, 0x0, 0x20, 0x0, 0x02, 0x0}, 
 
 static int mipi_video_hx8389b_qhd_pt_init(void)
 {
@@ -47,57 +44,62 @@ static int mipi_video_hx8389b_qhd_pt_init(void)
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
-	pinfo.lcdc.h_back_porch = 55;
-	pinfo.lcdc.h_front_porch = 55;
-	pinfo.lcdc.h_pulse_width = 20;
-	pinfo.lcdc.v_back_porch = 21;
-	pinfo.lcdc.v_front_porch = 17;
+	pinfo.lcdc.h_back_porch = 50;
+	pinfo.lcdc.h_front_porch = 50;
+	pinfo.lcdc.h_pulse_width = 50;
+	pinfo.lcdc.v_back_porch = 9;
+	pinfo.lcdc.v_front_porch = 14;
 	pinfo.lcdc.v_pulse_width = 4;
 	pinfo.lcdc.border_clr = 0;	/* blk */
 	pinfo.lcdc.underflow_clr = 0xff;	/* blue */
 	/* number of dot_clk cycles HSYNC active edge is
 	delayed from VSYNC active edge */
 	pinfo.lcdc.hsync_skew = 0;
-	pinfo.clk_rate = 513000000;
-	pinfo.bl_max = 255;
+	pinfo.clk_rate = 335000000;
+	pinfo.bl_max = 147;
 	pinfo.bl_min = 1;
-	pinfo.fb_num = 3;
+	pinfo.fb_num = 2;
 
 	pinfo.mipi.mode = DSI_VIDEO_MODE;
 	/* send HSA and HE following VS/VE packet */
+#if 0 //for LP mode from jangsu
 	pinfo.mipi.pulse_mode_hsa_he = TRUE;
-	pinfo.mipi.hfp_power_stop = FALSE; /* LP-11 during the HFP period */
-	pinfo.mipi.hbp_power_stop = FALSE; /* LP-11 during the HBP period */
-	pinfo.mipi.hsa_power_stop = FALSE; /* LP-11 during the HSA period */
-	/* LP-11 or let Command Mode Engine send packets in
-	HS or LP mode for the BLLP of the last line of a frame */
+	pinfo.mipi.hfp_power_stop = FALSE;
+	pinfo.mipi.hbp_power_stop = FALSE;
+	pinfo.mipi.hsa_power_stop = FALSE;
 	pinfo.mipi.eof_bllp_power_stop = TRUE;
-	/* LP-11 or let Command Mode Engine send packets in
-	HS or LP mode for packets sent during BLLP period */
+	pinfo.mipi.bllp_power_stop = FALSE;
+#else
+	pinfo.mipi.pulse_mode_hsa_he = TRUE;
+	pinfo.mipi.hfp_power_stop = FALSE;
+	pinfo.mipi.hbp_power_stop = FALSE;
+	pinfo.mipi.hsa_power_stop = FALSE;
+	pinfo.mipi.eof_bllp_power_stop = FALSE;
 	pinfo.mipi.bllp_power_stop = TRUE;
 
-	pinfo.mipi.traffic_mode = DSI_BURST_MODE;
-	pinfo.mipi.dst_format =  DSI_VIDEO_DST_FORMAT_RGB888;
+#endif
+//LGE_CHANGE_S [Kiran] Change LCD sleep sequence
+
+	pinfo.mipi.traffic_mode = DSI_NON_BURST_SYNCH_EVENT;//DSI_NON_BURST_SYNCH_PULSE;//DSI_NON_BURST_SYNCH_EVENT;
+	pinfo.mipi.dst_format = DSI_VIDEO_DST_FORMAT_RGB888;
 	pinfo.mipi.vc = 0;
-	pinfo.mipi.rgb_swap = DSI_RGB_SWAP_RGB; /* RGB */
+	pinfo.mipi.rgb_swap = DSI_RGB_SWAP_RGB;
 	pinfo.mipi.data_lane0 = TRUE;
 	pinfo.mipi.data_lane1 = TRUE;
-
-	pinfo.mipi.t_clk_post = 0xa1;
-	pinfo.mipi.t_clk_pre = 0x0f;
-
+	pinfo.mipi.t_clk_post = 0x04;
+	pinfo.mipi.t_clk_pre = 0x17;
 	pinfo.mipi.stream = 0; /* dma_p */
-	pinfo.mipi.mdp_trigger = DSI_CMD_TRIGGER_NONE;
+	pinfo.mipi.mdp_trigger = DSI_CMD_TRIGGER_SW; /*DSI_CMD_TRIGGER_SW;*/
 	pinfo.mipi.dma_trigger = DSI_CMD_TRIGGER_SW;
-	pinfo.mipi.frame_rate = 60;
+	pinfo.mipi.frame_rate = 60;	/* 60fps, 50fps, 30fps */
 
 	pinfo.mipi.dsi_phy_db = &dsi_video_mode_phy_db;
-	/* append EOT at the end of data burst */
+	pinfo.mipi.dlane_swap = 0x01;	
 	pinfo.mipi.tx_eot_append = 0x01;
 
-	ret = mipi_hx8389b_device_register(&pinfo, MIPI_DSI_PRIM,
-						MIPI_DSI_PANEL_QHD_PT);
 
+	ret = mipi_hx8389b_device_register(&pinfo, MIPI_DSI_PRIM,
+						MIPI_DSI_PANEL_FWVGA_PT);
 	if (ret)
 		pr_err("%s: failed to register device!\n", __func__);
 
