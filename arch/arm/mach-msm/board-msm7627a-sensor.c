@@ -176,9 +176,9 @@ static struct mpu_platform_data mpu3050_data = {
 /* accel x and z axis invert for EVB */
 static struct ext_slave_platform_data inv_mpu_bma250_data = {
 	.bus         = EXT_SLAVE_BUS_SECONDARY,
-	.orientation = { -1, 0, 0,
+	.orientation = { 1, 0, 0,
 			0, 1, 0,
-			0, 0, -1 },
+			0, 0, 1 },
 };
 /* compass  */
 static struct ext_slave_platform_data inv_mpu_mmc328xms_data = {
