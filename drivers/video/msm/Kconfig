@@ -1,4 +1,5 @@
 
+
 source "drivers/video/msm/vidc/Kconfig"
 
 config FB_MSM
@@ -139,6 +140,12 @@ config FB_MSM_TVOUT
 	bool
 	default n
 
+config CONFIG_FLY_MIRACLE_2_SUPPORT
+	bool "Enable support for Fly iq442Quad Miracle 2"
+	default n
+	help
+	Enable support for Fly iq442Quad Miracle 2.
+
 config FB_MSM_MDDI_TOSHIBA_COMMON
 	bool
 	select FB_MSM_MDDI
@@ -202,6 +209,10 @@ config FB_MSM_MIPI_DSI_NT35510
 	bool
 	select FB_MSM_MIPI_DSI
 
+config FB_MSM_MIPI_DSI_HX8379A
+	bool
+	select FB_MSM_MIPI_DSI	
+	
 config FB_MSM_MIPI_DSI_HX8389B
 	bool
 	select FB_MSM_MIPI_DSI
@@ -383,6 +394,11 @@ config FB_MSM_MIPI_NT35510_CMD_WVGA_PT
 	select FB_MSM_MIPI_DSI_NT35510
 	default n
 
+config FB_MSM_MIPI_HX8379A_VIDEO_WVGA_PT
+	bool
+	select FB_MSM_MIPI_DSI_HX8379A
+	default n	
+	
 config FB_MSM_MIPI_HX8389B_VIDEO_QHD_PT
 	bool
 	select FB_MSM_MIPI_DSI_HX8389B
@@ -758,6 +774,10 @@ config FB_MSM_MIPI_NT35510_CMD_WVGA_PT_PANEL
 	bool "MIPI NT35510 Command WVGA PT Panel"
 	select FB_MSM_MIPI_NT35510_CMD_WVGA_PT
 
+config FB_MSM_MIPI_HX8379A_VIDEO_WVGA_PT_PANEL
+	bool "MIPI HX8379A_VIDEO_WVGA_PT Panel"
+	select FB_MSM_MIPI_HX8379A_VIDEO_WVGA_PT	
+	
 config FB_MSM_MIPI_HX8389B_VIDEO_QHD_PT_PANEL
 	bool "MIPI HX8389B Video QHD PT Panel"
 	select FB_MSM_MIPI_HX8389B_VIDEO_QHD_PT
