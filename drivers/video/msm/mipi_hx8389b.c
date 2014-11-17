@@ -19,9 +19,18 @@
 #include "mipi_dsi.h"
 #include "mipi_hx8389b.h"
 
+#ifdef CONFIG_FLY_MIRACLE_2_SUPPORT
+
+static int fly_workroad = 0 // add support lcd panel for fly iq442Quad Miracle 2 by romandevel
+
+#endif
+
 static struct msm_panel_common_pdata *mipi_hx8389b_pdata;
 static struct dsi_buf hx8389b_tx_buf;
 static struct dsi_buf hx8389b_rx_buf;
+
+static int old_bl_level;
+int bl_level;
 
 static int mipi_hx8389b_bl_ctrl = 0;
 
@@ -143,7 +152,40 @@ static int mipi_hx8389b_lcd_on(struct platform_device *pdev)
 	if (mfd->key != MFD_KEY)
 		return -EINVAL;
 
+#ifdef CONFIG_FLY_MIRACLE_2_SUPPORT
+if (fly_workroad = 1) // add support lcd panel for fly iq442Quad Miracle 2 by romandevel
+
+   bl_level = 1;
+
+   pr_debug("fly_workroad on screen on the fly iq442Quad")
+
+return 0;      
+       
+} else {
+
 	mipi  = &mfd->panel_info.mipi;
+
+	if (!mfd->cont_splash_done) {
+		mfd->cont_splash_done = 1;
+		return 0;
+	}
+
+	if (mipi->mode == DSI_VIDEO_MODE) {
+		mipi_dsi_cmds_tx(&hx8389b_tx_buf,
+			hx8389b_video_display_on_cmds,
+			ARRAY_SIZE(hx8389b_video_display_on_cmds));
+	}
+
+    fly_workroad = 1;
+
+	pr_debug("mipi_hx8389b_lcd_on X\n");
+
+	return 0;
+}
+
+#else
+
+     mipi  = &mfd->panel_info.mipi;
 
 	if (!mfd->cont_splash_done) {
 		mfd->cont_splash_done = 1;
@@ -158,8 +200,9 @@ static int mipi_hx8389b_lcd_on(struct platform_device *pdev)
 
 	pr_debug("mipi_hx8389b_lcd_on X\n");
 
-	return 0;
+	return 0; 
 }
+#endif
 
 static int mipi_hx8389b_lcd_off(struct platform_device *pdev)
 {
@@ -174,12 +217,33 @@ static int mipi_hx8389b_lcd_off(struct platform_device *pdev)
 	if (mfd->key != MFD_KEY)
 		return -EINVAL;
 
+#ifdef FLY_MIRACLE_2_SUPPORT 
+
+if (fly_workroad = 1) // add support lcd panel for fly iq442Quad Miracle 2 by romandevel
+
+   bl_level = 255;
+
+   pr_debug("fly_workroad off screen on the fly iq442Quad")
+
+return 0;
+
+} else {
 	mipi_dsi_cmds_tx(&hx8389b_tx_buf, hx8389b_display_off_cmds,
 			ARRAY_SIZE(hx8389b_display_off_cmds));
 
 	pr_debug("mipi_hx8389b_lcd_off X\n");
 	return 0;
 }
+
+#else
+
+mipi_dsi_cmds_tx(&hx8389b_tx_buf, hx8389b_display_off_cmds,
+			ARRAY_SIZE(hx8389b_display_off_cmds));
+
+	pr_debug("mipi_hx8389b_lcd_off X\n");
+	return 0;
+}
+#endif	
 
 static ssize_t mipi_hx8389b_wta_bl_ctrl(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t count)
@@ -266,11 +330,9 @@ static struct platform_driver this_driver = {
 	},
 };
 
-static int old_bl_level;
 
 static void mipi_hx8389b_set_backlight(struct msm_fb_data_type *mfd)
 {
-	int bl_level;
 	unsigned long flags;
 	bl_level = mfd->bl_level;
 
