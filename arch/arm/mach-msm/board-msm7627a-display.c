@@ -526,20 +526,20 @@ static int msm_fb_detect_panel(const char *name)
 		if (!strncmp(name, "mipi_cmd_renesas_fwvga", 22))
 			ret = 0;
 	} else if (machine_is_msm7627a_qrd1()) {
-		if (!strncmp(name, "mipi_video_truly_wvga", 21))
+		if (!strncmp(name, "mipi_video_otm8018b_hsd_dijing_wvga", 21))
 			ret = 0;
 	} else if (machine_is_msm7627a_qrd3() || machine_is_msm8625_qrd7()) {
-		if (!strncmp(name, "lcdc_truly_hvga_ips3p2335_pt", 28))
+		if (!strncmp(name, "mipi_video_otm8018b_hsd_dijing_wvga", 28))
 			ret = 0;
 	} else if (machine_is_msm7627a_evb() || machine_is_msm8625_evb() ||
 			machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a()) {
-		if (!strncmp(name, "mipi_cmd_nt35510_wvga", 21))
+		if (!strncmp(name, "mipi_video_otm8018b_hsd_dijing_wvga", 21))
 			ret = 0;
 	} else if (machine_is_msm8625q_skud() || machine_is_msm8625q_evbd()) {
-		if (!strncmp(name, "mipi_video_hx8389b_qhd", 22)) 
+		if (!strncmp(name, "mipi_video_otm8018b_hsd_dijing_wvga", 22)) 
                         ret = 0;
 	} else if (machine_is_msm8625q_skue()) {
-		if (!strncmp(name, "mipi_video_otm9605a_qhd", 23))
+		if (!strncmp(name, "mipi_video_otm8018b_hsd_dijing_wvga", 23))
                         ret = 0;
         }
 
@@ -758,7 +758,7 @@ static struct platform_device mipi_dsi_NT35510_panel_device = {
 		.platform_data = &mipi_NT35510_pdata,
 	}
 };
-
+#if 0
 static struct msm_panel_common_pdata mipi_hx8389b_pdata = {
 	.backlight    = evb_backlight_control,
 	.rotate_panel = NULL,
@@ -771,7 +771,45 @@ static struct platform_device mipi_dsi_hx8389b_panel_device = {
 		.platform_data = &mipi_hx8389b_pdata,
 	}
 };
+#endif
+static struct msm_panel_common_pdata mipi_video_otm8018b_hsd_dijing_wvga_pdata = {
+	.backlight    = evb_backlight_control,
+	.rotate_panel = NULL,
+};
 
+static struct platform_device mipi_dsi_video_otm8018b_hsd_dijing_wvga_panel_device = {
+	.name = "mipi_video_otm8018b_hsd_dijing_wvga",
+	.id   = 0,
+	.dev  = {
+		.platform_data = &mipi_video_otm8018b_hsd_dijing_wvga_pdata,
+	}
+};
+static struct msm_panel_common_pdata mipi_dijing_nt35516_pdata = {
+	.backlight    = evb_backlight_control,
+	.rotate_panel = NULL,
+};
+
+static struct platform_device mipi_dsi_dijing_nt35516_panel_device = {
+	.name = "mipi_dijing_nt35516_qhd_pt",
+	.id   = 0,
+	.dev  = {
+		.platform_data = &mipi_dijing_nt35516_pdata,
+	}
+};
+
+//static struct msm_panel_common_pdata mipi_djn_otm8018b_pdata = {
+//	.backlight    = evb_backlight_control,
+//	.rotate_panel = NULL,
+//};
+
+//static struct platform_device mipi_dsi_djn_otm8018b_panel_device = {
+//	.name = "mipi_djn_otm8018b",
+//	.id   = 0,
+//	.dev  = {
+//		.platform_data = &mipi_djn_otm8018b_pdata,
+	//}
+//};
+#if 0
 static struct msm_panel_common_pdata mipi_hx8392a_pdata = {
 	.backlight = evb_backlight_control,
 	.rotate_panel = NULL,
@@ -784,7 +822,7 @@ static struct platform_device mipi_dsi_hx8392a_panel_device = {
 		.platform_data = &mipi_hx8392a_pdata,
 	}
 };
-
+#endif
 static struct msm_panel_common_pdata mipi_otm9605a_pdata = {
 	.backlight    = skue_backlight_control,
 	.rotate_panel = NULL,
@@ -809,7 +847,7 @@ static struct platform_device mipi_dsi_NT35516_panel_device = {
 		.platform_data = &mipi_NT35516_pdata,
 	}
 };
-
+#if 0
 static struct msm_panel_common_pdata mipi_NT35590_pdata = {
 	.backlight = evb_backlight_control,
 };
@@ -821,6 +859,7 @@ static struct platform_device mipi_dsi_NT35590_panel_device = {
 		.platform_data = &mipi_NT35590_pdata,
 	}
 };
+#endif
 static struct platform_device *msm_fb_devices[] __initdata = {
 	&msm_fb_device,
 	&lcdc_toshiba_panel_device,
@@ -850,9 +889,8 @@ static struct platform_device *evb_fb_devices[] __initdata = {
 
 static struct platform_device *skud_fb_devices[] __initdata = {
 	&msm_fb_device,
-	&mipi_dsi_hx8389b_panel_device,
-	&mipi_dsi_NT35590_panel_device,
-	&mipi_dsi_hx8392a_panel_device,
+	&mipi_dsi_video_otm8018b_hsd_dijing_wvga_panel_device,
+	&mipi_dsi_dijing_nt35516_panel_device,
 };
 
 static struct platform_device *skue_fb_devices[] __initdata = {
