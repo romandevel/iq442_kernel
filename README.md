@@ -1,1 +1,1 @@
-Для побудови цього ядра потрібно використовувати iq442_defconfig.
+For build kernel we must used pap5400_defconfig
