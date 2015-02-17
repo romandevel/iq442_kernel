@@ -21,7 +21,11 @@
 #include <linux/input/rmi_i2c.h>
 #include <linux/delay.h>
 #include <linux/atmel_maxtouch.h>
+
+#ifdef CONFIG_TOUCHSCREEN_FT5X06
 #include <linux/input/ft5x06_ts.h>
+#endif
+ 
 #include <linux/leds-msm-tricolor.h>
 #include <asm/gpio.h>
 #include <asm/mach-types.h>
@@ -30,6 +34,14 @@
 #include <mach/socinfo.h>
 #include "devices.h"
 #include <linux/input/synaptics_dsx.h>
+
+#ifdef CONFIG_TOUCHSCREEN_HIMAX
+#include<linux/himax_ts.h>
+#define himax_ADDR 0x4a
+#define himax_RST 26
+#define himax_INT 48
+#define himax_ID -1
+#endif
 
 #include "board-msm7627a.h"
 #include "devices-msm7x2xa.h"
@@ -148,10 +160,10 @@ static struct platform_device kp_pdev = {
 		.platform_data	= &kp_pdata,
 	},
 };
-
+#if 0
 /* 8625 keypad device information */
 static unsigned int kp_row_gpios_8625[] = {31};
-static unsigned int kp_col_gpios_8625[] = {36, 37};
+static unsigned int kp_col_gpios_8625[] = {37, 38};
 
 static const unsigned short keymap_8625[] = {
 	KEY_VOLUMEUP,
@@ -193,10 +205,11 @@ static struct platform_device kp_pdev_8625 = {
 		.platform_data  = &kp_pdata_8625,
 	},
 };
+#endif
 
 /* skud keypad device information */
-static unsigned int kp_row_gpios_skud[] = {31, 32};
-static unsigned int kp_col_gpios_skud[] = {37};
+static unsigned int kp_row_gpios_skud[] = {31};
+static unsigned int kp_col_gpios_skud[] = {38,37};
 
 static const unsigned short keymap_skud[] = {
 	KEY_VOLUMEUP,
@@ -233,11 +246,12 @@ static struct platform_device kp_pdev_skud = {
 		.platform_data  = &kp_pdata_skud,
 	},
 };
-/* end of skud keypad device information */
 
+/* end of skud keypad device information */
+#if 0
 /* skue keypad device information */
-static unsigned int kp_row_gpios_skue[] = {31, 32};
-static unsigned int kp_col_gpios_skue[] = {37};
+static unsigned int kp_row_gpios_skue[] = {31};
+static unsigned int kp_col_gpios_skue[] = {37, 38};
 
 static const unsigned short keymap_skue[] = {
 	KEY_VOLUMEUP,
@@ -275,7 +289,7 @@ static struct platform_device kp_pdev_skue = {
 	},
 };
 /* end of skue keypad device information */
-
+#endif
 #define LED_GPIO_PDM 96
 
 #define MXT_TS_IRQ_GPIO         48
@@ -859,6 +873,72 @@ static struct platform_device hs_pdev = {
 	},
 };
 
+#ifdef CONFIG_TOUCHSCREEN_HIMAX
+static ssize_t himax_virtual_keys_show(struct kobject *kobj,
+struct kobj_attribute *attr, char *buf)
+{return snprintf(buf, 200,
+			__stringify(EV_KEY) ":" __stringify(KEY_HOME)  ":240:840:170:40"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_MENU)   ":70:840:170:40"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_BACK) ":410:840:170:40"
+			":" __stringify(EV_KEY) ":" __stringify(KEY_SEARCH)   ":472:840:135:60"
+			"\n");
+};
+
+struct kobject *himax_virtual_key_properties_kobj;
+
+static struct kobj_attribute himax_virtual_keys_attr = {
+.attr = {
+.name = "virtualkeys.himax-touchscreen",
+.mode = S_IRUGO,
+},
+.show = &himax_virtual_keys_show,
+};
+
+static struct attribute *himax_key_properties_attrs[] = {
+&himax_virtual_keys_attr.attr,
+NULL
+};
+static struct attribute_group himax_key_properties_attr_group = {
+.attrs = himax_key_properties_attrs,
+};
+
+static int himax_vkey_setup(void)
+{
+	int retval = 0;
+
+	himax_virtual_key_properties_kobj =
+		kobject_create_and_add("board_properties", NULL);
+	if (himax_virtual_key_properties_kobj)
+		retval = sysfs_create_group(himax_virtual_key_properties_kobj,
+				&himax_key_properties_attr_group);
+	if (!himax_virtual_key_properties_kobj || retval)
+		pr_err("failed to create himax board_properties\n");
+
+	return retval;
+}
+
+static struct himax_platform_data himax_platformdata = {
+.gpio_int = himax_INT,
+.gpio_id = himax_ID ,
+.gpio_rst = himax_RST,
+};
+
+static struct i2c_board_info himax_ts_devices_info[] __initdata = {
+{
+I2C_BOARD_INFO("himax_ts", himax_ADDR),
+.platform_data = &himax_platformdata,
+},
+};
+#endif /* HIMAX */
+
+static struct i2c_board_info gt9xx_device_info[] __initdata = {
+
+	{
+	    I2C_BOARD_INFO("Goodix-TS", 0x5d),
+
+	},
+};
+#ifdef CONFIG_TOUCHSCREEN_FT5X06
 #define FT5X06_IRQ_GPIO		48
 #define FT5X06_RESET_GPIO	26
 
@@ -919,6 +999,8 @@ static struct attribute_group ft5x06_virtual_key_properties_attr_group = {
 };
 
 struct kobject *ft5x06_virtual_key_properties_kobj;
+
+
 
 static struct regulator_bulk_data regs_ft5x06[] = {
 	{ .supply = "ldo12", .min_uV = 2700000, .max_uV = 3300000 },
@@ -1031,7 +1113,7 @@ static void __init ft5x06_touchpad_setup(void)
 				ft5x06_device_info,
 				ARRAY_SIZE(ft5x06_device_info));
 }
-
+#endif
 /* skud flash led and touch*/
 #define FLASH_LED_SKUD 34
 #define FLASH_LED_TORCH_SKUD 48
@@ -1123,13 +1205,14 @@ static struct platform_device msm_device_tricolor_leds = {
 };
 #endif
 /* SKU3/SKU7 keypad device information */
+#if 0
 #define KP_INDEX_SKU3(row, col) ((row)*ARRAY_SIZE(kp_col_gpios_qrd3) + (col))
-static unsigned int kp_row_gpios_qrd3[] = {31, 32};
-static unsigned int kp_col_gpios_qrd3[] = {36, 37};
-
-static unsigned int kp_row_gpios_evbdp[] = {42, 37};
-static unsigned int kp_col_gpios_evbdp[] = {31};
-
+static unsigned int kp_row_gpios_qrd3[] = {31};
+static unsigned int kp_col_gpios_qrd3[] = {37,38};
+#endif
+static unsigned int kp_row_gpios_evbdp[] = {31};
+static unsigned int kp_col_gpios_evbdp[] = {38,37};
+#if 0
 static const unsigned short keymap_qrd3[] = {
 	[KP_INDEX_SKU3(0, 0)] = KEY_VOLUMEUP,
 	[KP_INDEX_SKU3(0, 1)] = KEY_VOLUMEDOWN,
@@ -1165,7 +1248,7 @@ static struct platform_device kp_pdev_qrd3 = {
 		.platform_data  = &kp_pdata_qrd3,
 	},
 };
-
+#endif
 static struct pmic8029_led_platform_data leds_data_skud[] = {
 	{
 		.name = "button-backlight",
@@ -1320,7 +1403,19 @@ void __init qrd7627a_add_io_devices(void)
 				|| machine_is_msm8625q_skud()
 				|| machine_is_msm8625q_evbd()
 				|| machine_is_msm8625q_skue()) {
+#ifdef CONFIG_TOUCHSCREEN_FT5X06
 		ft5x06_touchpad_setup();
+#endif
+		i2c_register_board_info(MSM_GSBI1_QUP_I2C_BUS_ID,
+					gt9xx_device_info,
+					ARRAY_SIZE(gt9xx_device_info));
+		
+		#if defined(CONFIG_TOUCHSCREEN_HIMAX)
+		i2c_register_board_info(MSM_GSBI1_QUP_I2C_BUS_ID,
+		himax_ts_devices_info,
+		ARRAY_SIZE(himax_ts_devices_info));
+		himax_vkey_setup();;
+		#endif
 		/* evbd+ can support synaptic as well */
 		if (machine_is_msm8625q_evbd() &&
 			(socinfo_get_platform_type() == 0x13)) {
@@ -1375,6 +1470,7 @@ void __init qrd7627a_add_io_devices(void)
 			i2c_register_board_info(MSM_GSBI1_QUP_I2C_BUS_ID,
 				mxt_device_info,
 				ARRAY_SIZE(mxt_device_info));
+			
 			}
 		}
 	}
@@ -1388,15 +1484,12 @@ void __init qrd7627a_add_io_devices(void)
 #endif
 
 	/* keypad */
-	if (machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a())
-		kp_matrix_info_8625.keymap = keymap_8625_qrd5;
+	platform_device_register(&kp_pdev_skud);
 	/* keypad info for EVBD+ */
-	if (machine_is_msm8625q_evbd() &&
-			(socinfo_get_platform_type() == 13)) {
-			gpio_tlmm_config(GPIO_CFG(37, 0,
+			gpio_tlmm_config(GPIO_CFG(38, 0,
 						GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN,
 						GPIO_CFG_8MA), GPIO_CFG_ENABLE);
-			gpio_tlmm_config(GPIO_CFG(42, 0,
+			gpio_tlmm_config(GPIO_CFG(37, 0,
 						GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN,
 						GPIO_CFG_8MA), GPIO_CFG_ENABLE);
 			gpio_tlmm_config(GPIO_CFG(31, 0,
@@ -1406,17 +1499,7 @@ void __init qrd7627a_add_io_devices(void)
 			kp_matrix_info_skud.input_gpios = kp_col_gpios_evbdp;
 			kp_matrix_info_skud.noutputs = ARRAY_SIZE(kp_row_gpios_evbdp);
 			kp_matrix_info_skud.ninputs = ARRAY_SIZE(kp_col_gpios_evbdp);
-	}
 
-	if (machine_is_msm7627a_evb() || machine_is_msm8625_evb() ||
-			machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a())
-		platform_device_register(&kp_pdev_8625);
-	else if (machine_is_msm7627a_qrd3() || machine_is_msm8625_qrd7())
-		platform_device_register(&kp_pdev_qrd3);
-	else if (machine_is_msm8625q_skud()||machine_is_msm8625q_evbd())
-		platform_device_register(&kp_pdev_skud);
-	else if (machine_is_msm8625q_skue())
-		platform_device_register(&kp_pdev_skue);
 
 	/* leds */
 	if (machine_is_msm7627a_evb() || machine_is_msm8625_evb()
