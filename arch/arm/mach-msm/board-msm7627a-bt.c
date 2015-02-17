@@ -96,22 +96,22 @@ static unsigned fm_i2s_config_power_off[] = {
 	GPIO_CFG(71, 0, GPIO_CFG_INPUT, GPIO_CFG_PULL_DOWN, GPIO_CFG_2MA),
 };
 
-int gpio_bt_sys_rest_en = 133;
+int gpio_bt_sys_rest_en = 85;
 static void gpio_bt_config(void)
 {
 	u32 socinfo = socinfo_get_platform_version();
 	if (machine_is_msm7627a_qrd1())
-		gpio_bt_sys_rest_en = 114;
+		gpio_bt_sys_rest_en = 85;
 	if (machine_is_msm7627a_evb() || machine_is_msm8625_evb()
 				|| machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a())
-		gpio_bt_sys_rest_en = 16;
+		gpio_bt_sys_rest_en = 84;
 	if(machine_is_msm8625q_skud() || machine_is_msm8625q_skue() || machine_is_msm8625q_evbd())
-		gpio_bt_sys_rest_en = 35;
+		gpio_bt_sys_rest_en = 85;
 	if (machine_is_msm8625_qrd7())
-		gpio_bt_sys_rest_en = 88;
+		gpio_bt_sys_rest_en = 85;
 	if (machine_is_msm7627a_qrd3()) {
 		if (socinfo == 0x70002)
-			gpio_bt_sys_rest_en = 88;
+			gpio_bt_sys_rest_en = 85;
 		 else
 			gpio_bt_sys_rest_en = 85;
 	}
