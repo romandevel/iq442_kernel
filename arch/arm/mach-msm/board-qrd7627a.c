@@ -624,6 +624,7 @@ static struct regulator_consumer_supply vreg_consumers_EXT_2P85V[] = {
 	REGULATOR_SUPPLY("cam_ov5647_avdd", "0-006c"),
 	REGULATOR_SUPPLY("cam_ov5647_truly_cm6868_avdd", "0-006c"),
 	REGULATOR_SUPPLY("cam_ov7692_avdd", "0-0078"),
+	REGULATOR_SUPPLY("cam_gc0339_avdd", "0-0036"),
 	REGULATOR_SUPPLY("cam_ov8825_avdd", "0-000d"),
 	REGULATOR_SUPPLY("lcd_vdd", "mipi_dsi.1"),
 #ifdef CONFIG_AR0543
@@ -643,6 +644,7 @@ static struct regulator_consumer_supply vreg_consumers_EXT_1P8V[] = {
 	REGULATOR_SUPPLY("cam_ov5647_truly_cm6868_vdd", "0-006c"),
 	REGULATOR_SUPPLY("cam_ov7692_vdd", "0-0078"),
 	REGULATOR_SUPPLY("cam_ov8825_vdd", "0-000d"),
+	REGULATOR_SUPPLY("cam_gc0399_vdd", "0-0036"),
 	REGULATOR_SUPPLY("lcd_vddi", "mipi_dsi.1"),
 #ifdef CONFIG_AR0543
 	REGULATOR_SUPPLY("cam_ar0543_vdd", "0-0064"),
@@ -781,11 +783,11 @@ static struct fan53555_platform_data fan53555_pdata = {
 
 static struct i2c_board_info i2c2_info[] __initdata = {
 	{
-		I2C_BOARD_INFO("ncp6335d", 0x38 >> 1),
+		I2C_BOARD_INFO("ncp6335d", 0x1c),
 		.platform_data = &ncp6335d_pdata,
 	},
 	{
-		I2C_BOARD_INFO("fan53555", 0xC0 >> 1),
+		I2C_BOARD_INFO("fan53555", 0x5c),
 		.platform_data = &fan53555_pdata,
 	},
 };
