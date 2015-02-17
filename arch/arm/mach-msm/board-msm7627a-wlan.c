@@ -46,7 +46,7 @@ static struct wlan_vreg_info vreg_info[] = {
 	{"wlan1v8",     1800000, 1800000, 0, 0, NULL}
 };
 
-int gpio_wlan_sys_rest_en = 124;
+int gpio_wlan_sys_rest_en = 38;
 static void gpio_wlan_config(void)
 {
 	if (machine_is_msm7627a_qrd1() || machine_is_msm7627a_evb()
@@ -55,7 +55,7 @@ static void gpio_wlan_config(void)
 					|| machine_is_msm7x27a_qrd5a()
 					|| machine_is_msm7627a_qrd3()
 					|| machine_is_msm8625_qrd7())
-		gpio_wlan_sys_rest_en = 124;
+		gpio_wlan_sys_rest_en = 38;
 	else if(machine_is_msm8625q_evbd()
 					|| machine_is_msm8625q_skue()
 					|| machine_is_msm8625q_skud())
