@@ -1115,8 +1115,8 @@ static void __init ft5x06_touchpad_setup(void)
 }
 #endif
 /* skud flash led and touch*/
-#define FLASH_LED_SKUD 34
-#define FLASH_LED_TORCH_SKUD 48
+#define FLASH_LED_SKUD 13
+#define FLASH_LED_TORCH_SKUD 12
 
 static struct gpio_led gpio_flash_config_skud[] = {
 	{
@@ -1143,67 +1143,6 @@ static struct platform_device gpio_flash_skud = {
 };
 /* end of skud flash led and touch*/
 
-/* skue flash led*/
-#define FLASH_LED_SKUE 34
-
-static struct gpio_led gpio_flash_config_skue[] = {
-        {
-                .name = "flashlight",
-                .gpio = FLASH_LED_SKUE,
-        },
-};
-
-static struct gpio_led_platform_data gpio_flash_pdata_skue = {
-        .num_leds = ARRAY_SIZE(gpio_flash_config_skue),
-        .leds = gpio_flash_config_skue,
-};
-
-static struct platform_device gpio_flash_skue = {
-        .name          = "leds-gpio",
-        .id            = -1,
-        .dev           = {
-                .platform_data = &gpio_flash_pdata_skue,
-        },
-};
-/* end of skue flash led*/
-
-
-#ifdef CONFIG_LEDS_TRICOLOR_FLAHSLIGHT
-
-#define LED_FLASH_EN1 13
-#define QRD7_LED_FLASH_EN 96
-
-static struct msm_gpio tricolor_leds_gpio_cfg_data[] = {
-{
-	GPIO_CFG(-1, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),
-		"flashlight"},
-};
-
-static int tricolor_leds_gpio_setup(void) {
-	int ret = 0;
-	if(machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a())
-	{
-		tricolor_leds_gpio_cfg_data[0].gpio_cfg = GPIO_CFG(LED_FLASH_EN1, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA);
-	}
-	else if(machine_is_msm8625_qrd7())
-	{
-		tricolor_leds_gpio_cfg_data[0].gpio_cfg = GPIO_CFG(QRD7_LED_FLASH_EN, 0, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA);
-	}
-
-	ret = msm_gpios_request_enable(tricolor_leds_gpio_cfg_data,
-			sizeof(tricolor_leds_gpio_cfg_data)/sizeof(struct msm_gpio));
-	if( ret<0 )
-		printk(KERN_ERR "%s: Failed to obtain tricolor_leds GPIO . Code: %d\n",
-				__func__, ret);
-	return ret;
-}
-
-
-static struct platform_device msm_device_tricolor_leds = {
-	.name   = "tricolor leds and flashlight",
-	.id = -1,
-};
-#endif
 /* SKU3/SKU7 keypad device information */
 #if 0
 #define KP_INDEX_SKU3(row, col) ((row)*ARRAY_SIZE(kp_col_gpios_qrd3) + (col))
@@ -1271,51 +1210,6 @@ static struct platform_device pmic_mpp_leds_pdev_skud = {
 	},
 };
 
-static struct pmic8029_led_platform_data leds_data[] = {
-	{
-		.name = "button-backlight",
-		.which = PM_MPP_7,
-		.type = PMIC8029_DRV_TYPE_CUR,
-		.max.cur = PM_MPP__I_SINK__LEVEL_40mA,
-	},
-};
-
-static struct pmic8029_leds_platform_data pmic8029_leds_pdata = {
-	.leds = leds_data,
-	.num_leds = 1,
-};
-
-static struct platform_device pmic_mpp_leds_pdev = {
-	.name   = "pmic-mpp-leds",
-	.id     = -1,
-	.dev    = {
-		.platform_data	= &pmic8029_leds_pdata,
-	},
-};
-
-static struct led_info tricolor_led_info[] = {
-	[0] = {
-		.name           = "red",
-		.flags          = LED_COLOR_RED,
-	},
-	[1] = {
-		.name           = "green",
-		.flags          = LED_COLOR_GREEN,
-	},
-};
-
-static struct led_platform_data tricolor_led_pdata = {
-	.leds = tricolor_led_info,
-	.num_leds = ARRAY_SIZE(tricolor_led_info),
-};
-
-static struct platform_device tricolor_leds_pdev = {
-	.name   = "msm-tricolor-leds",
-	.id     = -1,
-	.dev    = {
-		.platform_data  = &tricolor_led_pdata,
-	},
-};
 
 void __init msm7627a_add_io_devices(void)
 {
@@ -1502,26 +1396,12 @@ void __init qrd7627a_add_io_devices(void)
 
 
 	/* leds */
-	if (machine_is_msm7627a_evb() || machine_is_msm8625_evb()
-            || machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a()) {
 
-		platform_device_register(&pmic_mpp_leds_pdev);
-		platform_device_register(&tricolor_leds_pdev);
-	} else if (machine_is_msm8625q_skud() || machine_is_msm8625q_evbd()) {
+
 		platform_device_register(&pmic_mpp_leds_pdev_skud);
 		/* enable the skud flash and torch by gpio leds driver */
 		platform_device_register(&gpio_flash_skud);
-	} else if (machine_is_msm8625q_skue()) {
-		 /* enable the skue flashlight by gpio leds driver */
-                platform_device_register(&gpio_flash_skue);
-	}
 
-#ifdef CONFIG_LEDS_TRICOLOR_FLAHSLIGHT
-	    /*tricolor leds init*/
-	if (machine_is_msm7627a_evb() || machine_is_msm8625_evb()
-            || machine_is_msm8625_qrd5() || machine_is_msm7x27a_qrd5a()) {
-		platform_device_register(&msm_device_tricolor_leds);
-		tricolor_leds_gpio_setup();
-	}
-#endif
+
+
 }
